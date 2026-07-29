@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Color Generator & Converter | Color Master</title>
+    <meta name="description" content="Free online color palette generator. Convert HEX, RGB, and HSL to Flutter, SwiftUI, Android XML, and CSS formats instantly.">
+    <link rel="canonical" href="https://color-generator.corelumetech.in/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://color-generator.corelumetech.in/">
+    <meta property="og:title" content="Ultimate Color Generator & Converter | Color Master">
+    <meta property="og:description" content="Free online color palette generator. Convert HEX, RGB, and HSL to Flutter, SwiftUI, Android XML, and CSS formats instantly.">
+    <meta property="og:image" content="https://color-generator.corelumetech.in/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://color-generator.corelumetech.in/">
+    <meta property="twitter:title" content="Ultimate Color Generator & Converter | Color Master">
+    <meta property="twitter:description" content="Free online color palette generator. Convert HEX, RGB, and HSL to Flutter, SwiftUI, Android XML, and CSS formats instantly.">
+    <meta property="twitter:image" content="https://color-generator.corelumetech.in/og-image.jpg">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Color Master",
+      "url": "https://color-generator.corelumetech.in/",
+      "description": "Generate color palettes, convert hex/rgb/hsl to Flutter, SwiftUI, and CSS formats instantly.",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      }
+    }
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://quge5.com/88/tag.min.js" data-zone="265070" async data-cfasync="false"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Color Display -->
+        <div class="color-display" id="main-display">
+            <h1 id="display-hex">#6366F1</h1>
+            <p id="display-rgb">rgb(99, 102, 241)</p>
+        </div>
+
+        <main class="main-content">
+            <!-- Controls Section -->
+            <section class="controls-section">
+                <div class="card input-card">
+                    <h2>Color Input</h2>
+                    <div class="input-group flex-group">
+                        <input type="color" id="color-picker" value="#6366f1">
+                        <input type="text" id="hex-input" value="#6366F1" placeholder="#HEX">
+                    </div>
+                    
+                    <div class="rgb-inputs">
+                        <div class="input-group">
+                            <label>R</label>
+                            <input type="number" id="rgb-r" min="0" max="255" value="99">
+                        </div>
+                        <div class="input-group">
+                            <label>G</label>
+                            <input type="number" id="rgb-g" min="0" max="255" value="102">
+                        </div>
+                        <div class="input-group">
+                            <label>B</label>
+                            <input type="number" id="rgb-b" min="0" max="255" value="241">
+                        </div>
+                    </div>
+                    <button class="btn-random" id="btn-random"><i class="fa-solid fa-shuffle"></i> Random Color</button>
+                </div>
+
+                <!-- Code Converter -->
+                <div class="card converter-card">
+                    <h2>Universal Converter</h2>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>CSS / Web</span>
+                            <button class="btn-copy" data-target="code-css"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                        <pre id="code-css">color: #6366F1;</pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Flutter / Dart</span>
+                            <button class="btn-copy" data-target="code-flutter"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                        <pre id="code-flutter">Color(0xFF6366F1)</pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>SwiftUI / iOS</span>
+                            <button class="btn-copy" data-target="code-swiftui"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                        <pre id="code-swiftui">Color(red: 0.39, green: 0.40, blue: 0.95)</pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Android XML</span>
+                            <button class="btn-copy" data-target="code-android"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                        <pre id="code-android">&lt;color name="colorName"&gt;#FF6366F1&lt;/color&gt;</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Palette Generation Section -->
+            <section class="palette-section">
+                <h2>Generated Palettes</h2>
+                
+                <div class="palette-container">
+                    <h3>Monochromatic</h3>
+                    <div class="palette" id="palette-mono">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="palette-container">
+                    <h3>Analogous</h3>
+                    <div class="palette" id="palette-analogous">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="palette-container">
+                    <h3>Complementary & Split</h3>
+                    <div class="palette" id="palette-complementary">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="palette-container">
+                    <h3>Triadic</h3>
+                    <div class="palette" id="palette-triadic">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Copied to clipboard!</div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

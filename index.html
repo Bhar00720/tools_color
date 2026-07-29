@@ -41,6 +41,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://quge5.com/88/tag.min.js" data-zone="265070" async data-cfasync="false"></script>
+    <link rel="icon" href="favicon.jpg" type="image/jpeg">
 </head>
 <body>
     <div class="app-container">
@@ -77,41 +78,15 @@
                     <button class="btn-random" id="btn-random"><i class="fa-solid fa-shuffle"></i> Random Color</button>
                 </div>
 
-                <!-- Code Converter -->
-                <div class="card converter-card">
-                    <h2>Universal Converter</h2>
-                    
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>CSS / Web</span>
-                            <button class="btn-copy" data-target="code-css"><i class="fa-regular fa-copy"></i></button>
-                        </div>
-                        <pre id="code-css">color: #6366F1;</pre>
+                <!-- Selection Actions (Replaces static converter) -->
+                <div class="card selection-card">
+                    <h2>Selected Colors</h2>
+                    <p class="selection-info">Select colors from the palettes below to convert them instantly.</p>
+                    <div class="selection-stats">
+                        <span id="selected-count">0 Selected</span>
+                        <button class="btn-clear-selection" id="btn-clear-selection" style="display:none;"><i class="fa-solid fa-xmark"></i> Clear</button>
                     </div>
-
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>Flutter / Dart</span>
-                            <button class="btn-copy" data-target="code-flutter"><i class="fa-regular fa-copy"></i></button>
-                        </div>
-                        <pre id="code-flutter">Color(0xFF6366F1)</pre>
-                    </div>
-
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>SwiftUI / iOS</span>
-                            <button class="btn-copy" data-target="code-swiftui"><i class="fa-regular fa-copy"></i></button>
-                        </div>
-                        <pre id="code-swiftui">Color(red: 0.39, green: 0.40, blue: 0.95)</pre>
-                    </div>
-                    
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>Android XML</span>
-                            <button class="btn-copy" data-target="code-android"><i class="fa-regular fa-copy"></i></button>
-                        </div>
-                        <pre id="code-android">&lt;color name="colorName"&gt;#FF6366F1&lt;/color&gt;</pre>
-                    </div>
+                    <button class="btn-convert" id="btn-open-converter" disabled><i class="fa-solid fa-code"></i> Convert Selected</button>
                 </div>
             </section>
 
@@ -152,6 +127,49 @@
 
     <!-- Toast -->
     <div id="toast" class="toast">Copied to clipboard!</div>
+
+    <!-- Converter Modal -->
+    <div class="modal-overlay" id="converter-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Universal Converter</h2>
+                <button class="btn-close-modal" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>CSS Variables</span>
+                        <button class="btn-copy" data-target="code-css"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <pre id="code-css"></pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Flutter / Dart</span>
+                        <button class="btn-copy" data-target="code-flutter"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <pre id="code-flutter"></pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>SwiftUI / iOS</span>
+                        <button class="btn-copy" data-target="code-swiftui"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <pre id="code-swiftui"></pre>
+                </div>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Android XML</span>
+                        <button class="btn-copy" data-target="code-android"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <pre id="code-android"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script src="script.js"></script>
 </body>

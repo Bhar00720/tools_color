@@ -11,6 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const rgbB = document.getElementById('rgb-b');
     const btnRandom = document.getElementById('btn-random');
 
+    const selectedCount = document.getElementById('selected-count');
+    const btnClearSelection = document.getElementById('btn-clear-selection');
+    const btnOpenConverter = document.getElementById('btn-open-converter');
+    
+    const converterModal = document.getElementById('converter-modal');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+
     const codeCss = document.getElementById('code-css');
     const codeFlutter = document.getElementById('code-flutter');
     const codeSwiftui = document.getElementById('code-swiftui');
@@ -20,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Core State ---
     let currentColor = { r: 99, g: 102, b: 241 }; // Initial #6366F1
+    let selectedColors = []; // Array of hex strings
 
     // --- Color Math Helpers ---
     function rgbToHex(r, g, b) {
@@ -107,32 +115,31 @@ document.addEventListener('DOMContentLoaded', () => {
             rgbB.value = currentColor.b;
         }
 
-        // Update Code Formats
-        // CSS
+        // Generate Palettes based on current HSL
         const hsl = rgbToHsl(currentColor.r, currentColor.g, currentColor.b);
-        codeCss.innerText = `/* HEX */\ncolor: ${hex};\n/* RGB */\ncolor: ${rgbString};\n/* HSL */\ncolor: hsl(${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%);`;
-
-        // Flutter (Dart uses ARGB format: 0xAARRGGBB)
-        codeFlutter.innerText = `Color(0xFF${hex.replace('#', '')})`;
-
-        // SwiftUI
-        codeSwiftui.innerText = `Color(red: ${(currentColor.r/255).toFixed(3)}, green: ${(currentColor.g/255).toFixed(3)}, blue: ${(currentColor.b/255).toFixed(3)})`;
-
-        // Android XML
-        codeAndroid.innerText = `<!-- values/colors.xml -->\n<color name="my_color">#FF${hex.replace('#', '')}</color>`;
-
-        // Generate Palettes
         generatePalettes(hsl);
+    }
+
+    // --- Selection UI ---
+    function updateSelectionStats() {
+        selectedCount.innerText = `${selectedColors.length} Selected`;
+        if (selectedColors.length > 0) {
+            btnOpenConverter.disabled = false;
+            btnClearSelection.style.display = 'block';
+        } else {
+            btnOpenConverter.disabled = true;
+            btnClearSelection.style.display = 'none';
+        }
     }
 
     // --- Palette Generation ---
     function generatePalettes(baseHsl) {
         const {h, s, l} = baseHsl;
 
-        // Helpers to create DOM swatches
         const createSwatches = (hslArray, containerId) => {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
+            
             hslArray.forEach(color => {
                 const rgb = hslToRgb(color.h, color.s, color.l);
                 const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
@@ -140,22 +147,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const swatch = document.createElement('div');
                 swatch.className = 'color-swatch';
+                if (selectedColors.includes(hex)) {
+                    swatch.classList.add('selected');
+                }
+                
                 swatch.style.backgroundColor = hex;
                 swatch.style.color = lum > 0.5 ? '#000' : '#fff';
                 swatch.innerText = hex;
                 
-                // Click to copy
+                // Add Tooltip
+                swatch.setAttribute('data-tooltip', `${hex} | rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`);
+                
+                // Toggle selection on click
                 swatch.addEventListener('click', () => {
-                    navigator.clipboard.writeText(hex).then(() => {
-                        showToast(`Copied ${hex}!`);
-                    });
+                    const idx = selectedColors.indexOf(hex);
+                    if (idx > -1) {
+                        selectedColors.splice(idx, 1);
+                        swatch.classList.remove('selected');
+                    } else {
+                        selectedColors.push(hex);
+                        swatch.classList.add('selected');
+                    }
+                    updateSelectionStats();
                 });
                 
                 container.appendChild(swatch);
             });
         };
 
-        // Monochromatic: Vary Lightness
+        // Monochromatic
         let mono = [
             {h, s, l: Math.max(0, l - 40)},
             {h, s, l: Math.max(0, l - 20)},
@@ -164,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
             {h, s, l: Math.min(100, l + 40)},
         ];
 
-        // Analogous: Vary Hue slightly
+        // Analogous
         let analogous = [
             {h: (h - 60 + 360) % 360, s, l},
             {h: (h - 30 + 360) % 360, s, l},
@@ -173,11 +193,11 @@ document.addEventListener('DOMContentLoaded', () => {
             {h: (h + 60) % 360, s, l},
         ];
 
-        // Complementary & Split Complementary
+        // Complementary & Split
         let comp = [
             {h, s, l},
             {h: (h + 150) % 360, s, l},
-            {h: (h + 180) % 360, s, l}, // true complementary
+            {h: (h + 180) % 360, s, l}, 
             {h: (h + 210) % 360, s, l},
             {h: (h + 180) % 360, s, l: Math.min(100, l+20)},
         ];
@@ -197,7 +217,77 @@ document.addEventListener('DOMContentLoaded', () => {
         createSwatches(triadic, 'palette-triadic');
     }
 
-    // --- Event Listeners ---
+    // --- Modal & Code Generation ---
+    function generateModalCode() {
+        if (selectedColors.length === 0) return;
+
+        if (selectedColors.length === 1) {
+            const hex = selectedColors[0];
+            const rgb = hexToRgb(hex);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+            
+            codeCss.innerText = `/* HEX */\ncolor: ${hex};\n/* RGB */\ncolor: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});\n/* HSL */\ncolor: hsl(${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%);`;
+            codeFlutter.innerText = `Color(0xFF${hex.replace('#', '')})`;
+            codeSwiftui.innerText = `Color(red: ${(rgb.r/255).toFixed(3)}, green: ${(rgb.g/255).toFixed(3)}, blue: ${(rgb.b/255).toFixed(3)})`;
+            codeAndroid.innerText = `<!-- values/colors.xml -->\n<color name="color_1">#FF${hex.replace('#', '')}</color>`;
+        } else {
+            // Arrays/Lists for Multiple Colors
+            let cssOutput = `:root {\n`;
+            let flutterOutput = `List<Color> palette = [\n`;
+            let swiftOutput = `let palette = [\n`;
+            let androidOutput = `<!-- values/colors.xml -->\n`;
+
+            selectedColors.forEach((hex, i) => {
+                const rgb = hexToRgb(hex);
+                const num = i + 1;
+                
+                // CSS Variables
+                cssOutput += `  --color-${num}: ${hex};\n`;
+                
+                // Flutter List
+                flutterOutput += `  Color(0xFF${hex.replace('#', '')})${i < selectedColors.length - 1 ? ',' : ''}\n`;
+                
+                // SwiftUI Array
+                swiftOutput += `  Color(red: ${(rgb.r/255).toFixed(3)}, green: ${(rgb.g/255).toFixed(3)}, blue: ${(rgb.b/255).toFixed(3)})${i < selectedColors.length - 1 ? ',' : ''}\n`;
+                
+                // Android XML
+                androidOutput += `<color name="color_${num}">#FF${hex.replace('#', '')}</color>\n`;
+            });
+
+            cssOutput += `}`;
+            flutterOutput += `];`;
+            swiftOutput += `]`;
+
+            codeCss.innerText = cssOutput;
+            codeFlutter.innerText = flutterOutput;
+            codeSwiftui.innerText = swiftOutput;
+            codeAndroid.innerText = androidOutput;
+        }
+    }
+
+    btnOpenConverter.addEventListener('click', () => {
+        generateModalCode();
+        converterModal.classList.add('show');
+    });
+
+    btnCloseModal.addEventListener('click', () => {
+        converterModal.classList.remove('show');
+    });
+    
+    // Close modal on click outside
+    converterModal.addEventListener('click', (e) => {
+        if (e.target === converterModal) {
+            converterModal.classList.remove('show');
+        }
+    });
+
+    btnClearSelection.addEventListener('click', () => {
+        selectedColors = [];
+        document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('selected'));
+        updateSelectionStats();
+    });
+
+    // --- Input Event Listeners ---
     colorPicker.addEventListener('input', (e) => {
         const rgb = hexToRgb(e.target.value);
         if (rgb) {

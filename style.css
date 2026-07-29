@@ -225,6 +225,165 @@ pre {
     text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
+/* Swatch Selected State */
+.color-swatch {
+    position: relative;
+}
+.color-swatch.selected {
+    border: 3px solid white;
+    transform: scale(0.95);
+    z-index: 2;
+    border-radius: 8px;
+}
+.color-swatch.selected::after {
+    content: '\f00c';
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    color: white;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Tooltip */
+.color-swatch[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-5px);
+    background: #000;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+    z-index: 10;
+}
+.color-swatch[data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+/* Selection Card */
+.selection-card {
+    display: flex;
+    flex-direction: column;
+}
+.selection-info {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+.selection-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+#selected-count {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #a5b4fc;
+}
+.btn-clear-selection {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+}
+.btn-clear-selection:hover {
+    color: #fca5a5;
+}
+.btn-convert {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background-color: #6366F1;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-convert:disabled {
+    background-color: #334155;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+.btn-convert:not(:disabled):hover {
+    background-color: #4f46e5;
+}
+
+/* Modal Overlay & Content */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+.modal-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+.modal-content {
+    background: var(--card-bg);
+    width: 90%;
+    max-width: 700px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    transform: translateY(30px);
+    transition: 0.3s ease;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+.modal-overlay.show .modal-content {
+    transform: translateY(0);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border-color);
+}
+.modal-header h2 {
+    margin: 0;
+}
+.btn-close-modal {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-close-modal:hover {
+    color: white;
+}
+.modal-body {
+    padding: 25px;
+    overflow-y: auto;
+}
+
 /* Toast */
 .toast {
     position: fixed;

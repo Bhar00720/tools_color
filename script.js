@@ -356,6 +356,164 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
+    // --- Contrast Checker ---
+    const contrastBg = document.getElementById('contrast-bg');
+    const contrastFg = document.getElementById('contrast-fg');
+    const contrastPreview = document.getElementById('contrast-preview');
+    const contrastRatioEl = document.getElementById('contrast-ratio');
+    const contrastAa = document.getElementById('contrast-aa');
+    const contrastAaa = document.getElementById('contrast-aaa');
+
+    function getLuminance(r, g, b) {
+        let a = [r, g, b].map(function (v) {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+
+    function calculateContrastRatio(l1, l2) {
+        const lighter = Math.max(l1, l2);
+        const darker = Math.min(l1, l2);
+        return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    function updateContrast() {
+        const bgHex = contrastBg.value;
+        const fgHex = contrastFg.value;
+        
+        contrastPreview.style.backgroundColor = bgHex;
+        contrastPreview.style.color = fgHex;
+        
+        const bgRgb = hexToRgb(bgHex);
+        const fgRgb = hexToRgb(fgHex);
+        
+        if(bgRgb && fgRgb) {
+            const l1 = getLuminance(bgRgb.r, bgRgb.g, bgRgb.b);
+            const l2 = getLuminance(fgRgb.r, fgRgb.g, fgRgb.b);
+            const ratio = calculateContrastRatio(l1, l2);
+            
+            contrastRatioEl.innerText = ratio.toFixed(2) + ':1';
+            
+            const passAA = ratio >= 4.5;
+            const passAAA = ratio >= 7.0;
+            
+            contrastAa.className = 'badge ' + (passAA ? 'pass' : 'fail');
+            contrastAa.innerText = passAA ? 'Pass' : 'Fail';
+            
+            contrastAaa.className = 'badge ' + (passAAA ? 'pass' : 'fail');
+            contrastAaa.innerText = passAAA ? 'Pass' : 'Fail';
+        }
+    }
+
+    contrastBg.addEventListener('input', updateContrast);
+    contrastFg.addEventListener('input', updateContrast);
+    
+    updateContrast();
+
+    // --- Image Palette Extractor ---
+    const imageUpload = document.getElementById('image-upload');
+    const imageCanvas = document.getElementById('image-canvas');
+    const imagePreview = document.getElementById('image-preview');
+    const imagePlaceholder = document.getElementById('image-placeholder');
+    const paletteExtracted = document.getElementById('palette-extracted');
+
+    imageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                imagePreview.src = event.target.result;
+                imagePreview.style.display = 'block';
+                imagePlaceholder.style.display = 'none';
+                
+                extractPaletteFromImage(img);
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function extractPaletteFromImage(img) {
+        const ctx = imageCanvas.getContext('2d');
+        const maxDim = 200;
+        let width = img.width;
+        let height = img.height;
+        if(width > maxDim || height > maxDim) {
+            if(width > height) {
+                height = Math.round(height * maxDim / width);
+                width = maxDim;
+            } else {
+                width = Math.round(width * maxDim / height);
+                height = maxDim;
+            }
+        }
+        imageCanvas.width = width;
+        imageCanvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        const imageData = ctx.getImageData(0, 0, width, height).data;
+        
+        // simple grid sampling
+        const colors = [];
+        const step = Math.floor((imageData.length / 4) / 5);
+        for(let i=0; i<5; i++) {
+            const offset = (i * step + Math.floor(step/2)) * 4;
+            if(offset < imageData.length) {
+                colors.push({
+                    r: imageData[offset],
+                    g: imageData[offset+1],
+                    b: imageData[offset+2]
+                });
+            }
+        }
+        
+        paletteExtracted.innerHTML = '';
+        colors.forEach(rgb => {
+            const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+            const lum = (0.299*rgb.r + 0.587*rgb.g + 0.114*rgb.b)/255;
+            
+            const swatch = document.createElement('div');
+            swatch.className = 'color-swatch';
+            if (selectedColors.includes(hex)) {
+                swatch.classList.add('selected');
+            }
+            
+            swatch.style.backgroundColor = hex;
+            swatch.style.color = lum > 0.5 ? '#000' : '#fff';
+            swatch.innerText = hex;
+            swatch.setAttribute('data-tooltip', `${hex} | rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`);
+            
+            swatch.addEventListener('click', () => {
+                const idx = selectedColors.indexOf(hex);
+                const isNowSelected = idx === -1;
+                
+                if (isNowSelected) {
+                    selectedColors.push(hex);
+                } else {
+                    selectedColors.splice(idx, 1);
+                }
+                
+                document.querySelectorAll('.color-swatch').forEach(el => {
+                    if (el.innerText === hex) {
+                        if (isNowSelected) {
+                            el.classList.add('selected');
+                        } else {
+                            el.classList.remove('selected');
+                        }
+                    }
+                });
+                
+                updateSelectionStats();
+            });
+            
+            paletteExtracted.appendChild(swatch);
+        });
+    }
+
     // Initialize
     updateAll('init');
 });

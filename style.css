@@ -413,8 +413,94 @@ pre {
     bottom: 30px;
 }
 
+/* Advanced Tools */
+.advanced-tools-section {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.contrast-preview {
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.2rem;
+    border: 1px solid var(--border-color);
+}
+
+.contrast-results {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.badge.pass { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.badge.fail { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+.file-input {
+    width: 100%;
+    padding: 10px;
+    background: rgba(0,0,0,0.2);
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.file-input::file-selector-button {
+    background: #6366F1;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin-right: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+}
+
+.image-preview-container {
+    width: 100%;
+    height: 150px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+#image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+}
+#image-placeholder {
+    color: var(--text-secondary);
+}
+
 @media (max-width: 900px) {
-    .main-content {
+    .main-content,
+    .advanced-tools-section {
         grid-template-columns: 1fr;
     }
 }

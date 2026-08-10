@@ -123,6 +123,58 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Advanced Tools Section -->
+            <section class="advanced-tools-section">
+                <!-- WCAG Contrast Checker -->
+                <div class="card contrast-card">
+                    <h2>WCAG Contrast Checker</h2>
+                    <div class="flex-group">
+                        <div class="input-group">
+                            <label>Background</label>
+                            <input type="color" id="contrast-bg" value="#0f172a">
+                        </div>
+                        <div class="input-group">
+                            <label>Foreground</label>
+                            <input type="color" id="contrast-fg" value="#ffffff">
+                        </div>
+                    </div>
+                    <div class="contrast-preview" id="contrast-preview">
+                        Preview Text
+                    </div>
+                    <div class="contrast-results">
+                        <div class="result-item">
+                            <span>Ratio:</span>
+                            <strong id="contrast-ratio">21.00:1</strong>
+                        </div>
+                        <div class="result-item">
+                            <span>AA (4.5:1):</span>
+                            <span id="contrast-aa" class="badge pass">Pass</span>
+                        </div>
+                        <div class="result-item">
+                            <span>AAA (7.0:1):</span>
+                            <span id="contrast-aaa" class="badge pass">Pass</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Palette Extractor -->
+                <div class="card extractor-card">
+                    <h2>Image Palette Extractor</h2>
+                    <p class="selection-info">Upload an image to extract its dominant colors.</p>
+                    <input type="file" id="image-upload" accept="image/*" class="file-input" style="margin-bottom: 15px;">
+                    
+                    <canvas id="image-canvas" style="display: none;"></canvas>
+                    <div class="image-preview-container">
+                        <img id="image-preview" />
+                        <span id="image-placeholder">No image selected</span>
+                    </div>
+
+                    <div class="palette" id="palette-extracted" style="margin-bottom: 0;">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </section>
             
             <!-- SEO Footer Content -->
             <section class="seo-footer card">

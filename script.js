@@ -121,15 +121,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Selection UI ---
+    const selectionBar = document.getElementById('selection-bar');
+    const selectedColorsPreview = document.getElementById('selected-colors-preview');
+
     function updateSelectionStats() {
         selectedCount.innerText = `${selectedColors.length} Selected`;
         if (selectedColors.length > 0) {
-            btnOpenConverter.disabled = false;
-            btnClearSelection.style.display = 'block';
+            selectionBar.style.display = 'flex';
         } else {
-            btnOpenConverter.disabled = true;
-            btnClearSelection.style.display = 'none';
+            selectionBar.style.display = 'none';
         }
+        
+        selectedColorsPreview.innerHTML = '';
+        selectedColors.forEach(hex => {
+            const swatch = document.createElement('div');
+            swatch.className = 'mini-swatch';
+            swatch.style.backgroundColor = hex;
+            swatch.title = hex;
+            swatch.addEventListener('click', () => {
+                const idx = selectedColors.indexOf(hex);
+                if (idx > -1) {
+                    selectedColors.splice(idx, 1);
+                    document.querySelectorAll('.color-swatch').forEach(el => {
+                        if (el.innerText === hex) el.classList.remove('selected');
+                    });
+                    updateSelectionStats();
+                }
+            });
+            selectedColorsPreview.appendChild(swatch);
+        });
     }
 
     // --- Palette Generation ---
@@ -453,6 +473,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         imageCanvas.width = width;
         imageCanvas.height = height;
+        // Fill white background for transparent images
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
         
         const imageData = ctx.getImageData(0, 0, width, height).data;

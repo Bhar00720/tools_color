@@ -79,16 +79,7 @@
                     <button class="btn-random" id="btn-random"><i class="fa-solid fa-shuffle"></i> Random Color</button>
                 </div>
 
-                <!-- Selection Actions (Replaces static converter) -->
-                <div class="card selection-card">
-                    <h2>Selected Colors</h2>
-                    <p class="selection-info">Select colors from the palettes below to convert them instantly.</p>
-                    <div class="selection-stats">
-                        <span id="selected-count">0 Selected</span>
-                        <button class="btn-clear-selection" id="btn-clear-selection" style="display:none;"><i class="fa-solid fa-xmark"></i> Clear</button>
-                    </div>
-                    <button class="btn-convert" id="btn-open-converter" disabled><i class="fa-solid fa-code"></i> Convert Selected</button>
-                </div>
+                <!-- Selection Actions moved to floating bar at the bottom -->
             </section>
 
             <!-- Palette Generation Section -->
@@ -183,6 +174,18 @@
                 <p>Unlike standard tools, our <strong>color palette generator</strong> includes a Universal Converter. Select multiple colors from your generated palette and instantly export them as CSS Variables, Flutter Color Arrays, SwiftUI formats, or Android XML.</p>
             </section>
         </main>
+    </div>
+
+    <!-- Floating Selection Bar -->
+    <div class="card selection-card floating-bar" id="selection-bar" style="display:none;">
+        <div class="selection-content">
+            <div class="selection-stats">
+                <span id="selected-count">0 Selected</span>
+                <button class="btn-clear-selection" id="btn-clear-selection"><i class="fa-solid fa-xmark"></i> Clear</button>
+            </div>
+            <div class="selected-colors-preview" id="selected-colors-preview"></div>
+        </div>
+        <button class="btn-convert" id="btn-open-converter"><i class="fa-solid fa-code"></i> Convert Selected</button>
     </div>
 
     <!-- Toast -->

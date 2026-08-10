@@ -276,24 +276,37 @@ pre {
     transform: translateX(-50%) translateY(-10px);
 }
 
-/* Selection Card */
-.selection-card {
+/* Selection Card Floating Bar */
+.selection-card.floating-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 800px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 25px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    margin-bottom: 0;
+}
+.selection-card.floating-bar .selection-content {
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    margin-right: 20px;
 }
-.selection-info {
-    color: var(--text-secondary);
-    margin-bottom: 20px;
-    font-size: 0.95rem;
-}
-.selection-stats {
+.selection-card.floating-bar .selection-stats {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    background: rgba(0,0,0,0.2);
-    border-radius: 10px;
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent;
+    justify-content: flex-start;
+    gap: 20px;
 }
 #selected-count {
     font-weight: 600;
@@ -310,6 +323,40 @@ pre {
 }
 .btn-clear-selection:hover {
     color: #fca5a5;
+}
+.selected-colors-preview {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.mini-swatch {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.mini-swatch:hover {
+    transform: scale(1.1);
+}
+.selection-card.floating-bar .btn-convert {
+    width: auto;
+    padding: 15px 25px;
+    white-space: nowrap;
+}
+@media (max-width: 600px) {
+    .selection-card.floating-bar {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .selection-card.floating-bar .selection-content {
+        margin-right: 0;
+        width: 100%;
+    }
+    .selection-card.floating-bar .btn-convert {
+        width: 100%;
+    }
 }
 .btn-convert {
     width: 100%;

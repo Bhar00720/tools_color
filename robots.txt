@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://color-generator.corelumetech.in/sitemap.xml

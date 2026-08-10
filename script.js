@@ -161,13 +161,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Toggle selection on click
                 swatch.addEventListener('click', () => {
                     const idx = selectedColors.indexOf(hex);
-                    if (idx > -1) {
-                        selectedColors.splice(idx, 1);
-                        swatch.classList.remove('selected');
-                    } else {
+                    const isNowSelected = idx === -1;
+                    
+                    if (isNowSelected) {
                         selectedColors.push(hex);
-                        swatch.classList.add('selected');
+                    } else {
+                        selectedColors.splice(idx, 1);
                     }
+                    
+                    // Update visual state for all swatches that share this hex color
+                    document.querySelectorAll('.color-swatch').forEach(el => {
+                        if (el.innerText === hex) {
+                            if (isNowSelected) {
+                                el.classList.add('selected');
+                            } else {
+                                el.classList.remove('selected');
+                            }
+                        }
+                    });
+                    
                     updateSelectionStats();
                 });
                 

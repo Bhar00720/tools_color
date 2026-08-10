@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Generate Palettes based on current HSL
         const hsl = rgbToHsl(currentColor.r, currentColor.g, currentColor.b);
         generatePalettes(hsl);
+        generateShadesAndTints(currentColor);
     }
 
     // --- Selection UI ---
@@ -139,16 +140,70 @@ document.addEventListener('DOMContentLoaded', () => {
             swatch.style.backgroundColor = hex;
             swatch.title = hex;
             swatch.addEventListener('click', () => {
-                const idx = selectedColors.indexOf(hex);
-                if (idx > -1) {
-                    selectedColors.splice(idx, 1);
-                    document.querySelectorAll('.color-swatch').forEach(el => {
-                        if (el.innerText === hex) el.classList.remove('selected');
-                    });
-                    updateSelectionStats();
-                }
+                toggleSelection(hex);
             });
             selectedColorsPreview.appendChild(swatch);
+        });
+    }
+
+    function toggleSelection(hex) {
+        const idx = selectedColors.indexOf(hex);
+        const isNowSelected = idx === -1;
+        
+        if (isNowSelected) {
+            selectedColors.push(hex);
+        } else {
+            selectedColors.splice(idx, 1);
+        }
+        
+        document.querySelectorAll('.color-swatch').forEach(el => {
+            if (el.dataset.hex === hex) {
+                if (isNowSelected) el.classList.add('selected');
+                else el.classList.remove('selected');
+            }
+        });
+        updateSelectionStats();
+    }
+
+    // --- Shades & Tints ---
+    function generateShadesAndTints(rgb) {
+        const container = document.getElementById('shades-container');
+        container.innerHTML = '';
+        const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+        
+        let colors = [];
+        for (let i = 9; i >= 0; i--) {
+            let l = 5 + (i * 10);
+            colors.push({h: hsl.h, s: hsl.s, l: Math.min(100, Math.max(0, l))});
+        }
+        
+        colors.forEach(c => {
+            const trgb = hslToRgb(c.h, c.s, c.l);
+            const hex = rgbToHex(trgb.r, trgb.g, trgb.b);
+            const swatch = document.createElement('div');
+            swatch.className = 'color-swatch';
+            swatch.dataset.hex = hex;
+            swatch.style.backgroundColor = hex;
+            
+            if (selectedColors.includes(hex)) swatch.classList.add('selected');
+
+            swatch.innerHTML = `
+                <div class="swatch-overlay">
+                    <button class="swatch-action action-copy" data-hex="${hex}"><i class="fa-regular fa-copy"></i></button>
+                    <button class="swatch-action action-select" data-hex="${hex}"><i class="fa-solid fa-check"></i></button>
+                </div>
+            `;
+            swatch.querySelector('.action-copy').addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(hex);
+                showToast('Copied: ' + hex);
+            });
+            swatch.querySelector('.action-select').addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleSelection(hex);
+            });
+            
+            container.appendChild(swatch);
         });
     }
 
@@ -167,40 +222,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const swatch = document.createElement('div');
                 swatch.className = 'color-swatch';
+                swatch.dataset.hex = hex;
                 if (selectedColors.includes(hex)) {
                     swatch.classList.add('selected');
                 }
                 
                 swatch.style.backgroundColor = hex;
                 swatch.style.color = lum > 0.5 ? '#000' : '#fff';
-                swatch.innerText = hex;
                 
-                // Add Tooltip
-                swatch.setAttribute('data-tooltip', `${hex} | rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`);
+                swatch.innerHTML = `
+                    <span class="swatch-text">${hex}</span>
+                    <div class="swatch-overlay">
+                        <button class="swatch-action action-copy"><i class="fa-regular fa-copy"></i> Copy</button>
+                        <button class="swatch-action action-select"><i class="fa-solid fa-check"></i> Select</button>
+                        <button class="swatch-action action-main"><i class="fa-solid fa-star"></i> Main</button>
+                    </div>
+                `;
                 
-                // Toggle selection on click
-                swatch.addEventListener('click', () => {
-                    const idx = selectedColors.indexOf(hex);
-                    const isNowSelected = idx === -1;
-                    
-                    if (isNowSelected) {
-                        selectedColors.push(hex);
-                    } else {
-                        selectedColors.splice(idx, 1);
+                swatch.querySelector('.action-copy').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(hex);
+                    showToast('Copied: ' + hex);
+                });
+                
+                swatch.querySelector('.action-select').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleSelection(hex);
+                });
+
+                swatch.querySelector('.action-main').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const newRgb = hexToRgb(hex);
+                    if(newRgb) {
+                        currentColor = newRgb;
+                        updateAll('manual');
                     }
-                    
-                    // Update visual state for all swatches that share this hex color
-                    document.querySelectorAll('.color-swatch').forEach(el => {
-                        if (el.innerText === hex) {
-                            if (isNowSelected) {
-                                el.classList.add('selected');
-                            } else {
-                                el.classList.remove('selected');
-                            }
-                        }
-                    });
-                    
-                    updateSelectionStats();
                 });
                 
                 container.appendChild(swatch);
@@ -501,39 +557,127 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const swatch = document.createElement('div');
             swatch.className = 'color-swatch';
+            swatch.dataset.hex = hex;
             if (selectedColors.includes(hex)) {
                 swatch.classList.add('selected');
             }
             
             swatch.style.backgroundColor = hex;
             swatch.style.color = lum > 0.5 ? '#000' : '#fff';
-            swatch.innerText = hex;
-            swatch.setAttribute('data-tooltip', `${hex} | rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`);
             
-            swatch.addEventListener('click', () => {
-                const idx = selectedColors.indexOf(hex);
-                const isNowSelected = idx === -1;
-                
-                if (isNowSelected) {
-                    selectedColors.push(hex);
-                } else {
-                    selectedColors.splice(idx, 1);
+            swatch.innerHTML = `
+                <span class="swatch-text">${hex}</span>
+                <div class="swatch-overlay">
+                    <button class="swatch-action action-copy"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="swatch-action action-select"><i class="fa-solid fa-check"></i> Select</button>
+                    <button class="swatch-action action-main"><i class="fa-solid fa-star"></i> Main</button>
+                </div>
+            `;
+            
+            swatch.querySelector('.action-copy').addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(hex);
+                showToast('Copied: ' + hex);
+            });
+            
+            swatch.querySelector('.action-select').addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleSelection(hex);
+            });
+
+            swatch.querySelector('.action-main').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const newRgb = hexToRgb(hex);
+                if(newRgb) {
+                    currentColor = newRgb;
+                    updateAll('manual');
                 }
-                
-                document.querySelectorAll('.color-swatch').forEach(el => {
-                    if (el.innerText === hex) {
-                        if (isNowSelected) {
-                            el.classList.add('selected');
-                        } else {
-                            el.classList.remove('selected');
-                        }
-                    }
-                });
-                
-                updateSelectionStats();
             });
             
             paletteExtracted.appendChild(swatch);
+        });
+    }
+
+    // --- Gradient Maker ---
+    const gradColor1 = document.getElementById('grad-color1');
+    const gradColor2 = document.getElementById('grad-color2');
+    const gradAngle = document.getElementById('grad-angle');
+    const gradAngleVal = document.getElementById('grad-angle-val');
+    const gradientPreview = document.getElementById('gradient-preview');
+    const codeGradient = document.getElementById('code-gradient');
+
+    function updateGradient() {
+        const c1 = gradColor1.value;
+        const c2 = gradColor2.value;
+        const angle = gradAngle.value;
+        if(gradAngleVal) gradAngleVal.innerText = angle;
+        
+        const css = `background: linear-gradient(${angle}deg, ${c1}, ${c2});`;
+        if(gradientPreview) gradientPreview.style = css + " height: 120px; border-radius:12px; border:1px solid var(--border-color); margin-bottom: 15px;";
+        if(codeGradient) codeGradient.innerText = css;
+    }
+
+    if(gradColor1) gradColor1.addEventListener('input', updateGradient);
+    if(gradColor2) gradColor2.addEventListener('input', updateGradient);
+    if(gradAngle) gradAngle.addEventListener('input', updateGradient);
+    updateGradient();
+
+    // --- Export PNG ---
+    const btnExportPng = document.getElementById('btn-export-png');
+    if(btnExportPng) {
+        btnExportPng.addEventListener('click', () => {
+            const palettes = [
+                { title: 'Monochromatic', el: document.getElementById('palette-mono') },
+                { title: 'Analogous', el: document.getElementById('palette-analogous') },
+                { title: 'Complementary', el: document.getElementById('palette-complementary') },
+                { title: 'Triadic', el: document.getElementById('palette-triadic') }
+            ];
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const width = 800;
+            const height = palettes.length * 160 + 100;
+            canvas.width = width;
+            canvas.height = height;
+            
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, width, height);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '28px sans-serif';
+            ctx.fillText('Color Master - Generated Palettes', 40, 60);
+            
+            let y = 100;
+            palettes.forEach(pal => {
+                const swatches = pal.el.querySelectorAll('.color-swatch');
+                if(swatches.length === 0) return;
+                
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '18px sans-serif';
+                ctx.fillText(pal.title, 40, y);
+                y += 20;
+                
+                const swatchW = (width - 80) / swatches.length;
+                const swatchH = 100;
+                
+                swatches.forEach((s, idx) => {
+                    ctx.fillStyle = s.dataset.hex;
+                    ctx.fillRect(40 + (idx * swatchW), y, swatchW, swatchH);
+                    
+                    ctx.fillStyle = s.style.color || '#fff';
+                    ctx.font = 'bold 16px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(s.dataset.hex, 40 + (idx * swatchW) + (swatchW/2), y + swatchH - 20);
+                    ctx.textAlign = 'left';
+                });
+                y += swatchH + 40;
+            });
+            
+            const link = document.createElement('a');
+            link.download = 'color-master-palettes.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('Palettes exported successfully!');
         });
     }
 

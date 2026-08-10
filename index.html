@@ -29,19 +29,27 @@
       "@type": "WebApplication",
       "name": "Color Master",
       "url": "https://color-generator.corelumetech.in/",
-      "description": "Generate color palettes, convert hex/rgb/hsl to Flutter, SwiftUI, and CSS formats instantly.",
+      "description": "Generate color palettes, extract colors from images, create CSS gradients, and generate color shades and tints instantly.",
       "applicationCategory": "DesignApplication",
       "operatingSystem": "All",
       "offers": {
         "@type": "Offer",
         "price": "0"
-      }
+      },
+      "featureList": [
+        "Color Palette Generator",
+        "CSS Gradient Maker",
+        "Color Shades and Tints Generator",
+        "Image Color Extractor",
+        "WCAG Contrast Checker",
+        "HEX/RGB/HSL Converter"
+      ]
     }
     </script>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://quge5.com/88/tag.min.js" data-zone="266623" async data-cfasync="false"></script>
+    <script src="https://5gvci.com/act/files/tag.min.js?z=11545072" data-cfasync="false" async></script>
     <link rel="icon" href="favicon.jpg" type="image/jpeg">
 </head>
 <body>
@@ -82,9 +90,20 @@
                 <!-- Selection Actions moved to floating bar at the bottom -->
             </section>
 
+            <!-- Shades & Tints Section -->
+            <section class="shades-section" style="margin-bottom: 40px; grid-column: 1 / -1;">
+                <h2>Shades & Tints</h2>
+                <div class="shades-container" id="shades-container" style="display: flex; height: 60px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    <!-- Filled by JS -->
+                </div>
+            </section>
+
             <!-- Palette Generation Section -->
             <section class="palette-section">
-                <h2>Generated Palettes</h2>
+                <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h2 style="margin:0;">Generated Palettes</h2>
+                    <button class="btn-random" id="btn-export-png" style="width:auto; padding: 10px 20px; font-size: 0.9rem;"><i class="fa-solid fa-download"></i> Export as PNG</button>
+                </div>
                 
                 <div class="palette-container">
                     <h3>Monochromatic</h3>
@@ -117,6 +136,33 @@
 
             <!-- Advanced Tools Section -->
             <section class="advanced-tools-section">
+                <!-- CSS Gradient Maker -->
+                <div class="card gradient-card">
+                    <h2>CSS Gradient Maker</h2>
+                    <div class="flex-group">
+                        <div class="input-group">
+                            <label>Color 1</label>
+                            <input type="color" id="grad-color1" value="#6366f1">
+                        </div>
+                        <div class="input-group">
+                            <label>Color 2</label>
+                            <input type="color" id="grad-color2" value="#ec4899">
+                        </div>
+                        <div class="input-group" style="flex:1;">
+                            <label>Angle (<span id="grad-angle-val">90</span>&deg;)</label>
+                            <input type="range" id="grad-angle" min="0" max="360" value="90" style="width:100%; height:40px;">
+                        </div>
+                    </div>
+                    <div class="gradient-preview" id="gradient-preview" style="height: 120px; border-radius:12px; border:1px solid var(--border-color); margin-bottom: 15px;"></div>
+                    <div class="code-block" style="margin-bottom:0;">
+                        <div class="code-header">
+                            <span>CSS Code</span>
+                            <button class="btn-copy" data-target="code-gradient"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                        <pre id="code-gradient"></pre>
+                    </div>
+                </div>
+
                 <!-- WCAG Contrast Checker -->
                 <div class="card contrast-card">
                     <h2>WCAG Contrast Checker</h2>
@@ -168,10 +214,11 @@
             </section>
             
             <!-- SEO Footer Content -->
-            <section class="seo-footer card">
+            <section class="seo-footer card" style="grid-column: 1 / -1;">
                 <h2>About This Color Palette Generator</h2>
                 <p>Welcome to <strong>Color Master</strong>, the ultimate <strong>color palette generator</strong> for developers and designers. Whether you need a monochromatic color scheme or a complex triadic setup, our tool generates stunning palettes instantly.</p>
-                <p>Unlike standard tools, our <strong>color palette generator</strong> includes a Universal Converter. Select multiple colors from your generated palette and instantly export them as CSS Variables, Flutter Color Arrays, SwiftUI formats, or Android XML.</p>
+                <p>Use our <strong>CSS Gradient Maker</strong> to create seamless transitions, or explore the <strong>Color Shades and Tints Generator</strong> to find the perfect hue. You can even upload a photo to our <strong>Image Color Extractor</strong> to pull a beautiful palette directly from an image!</p>
+                <p>Unlike standard tools, our generator includes a Universal Converter. Select multiple colors and instantly export them as CSS Variables, Flutter Color Arrays, SwiftUI formats, or Android XML, or download your entire palette as a PNG image.</p>
             </section>
         </main>
     </div>

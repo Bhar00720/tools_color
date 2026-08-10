@@ -208,7 +208,7 @@ pre {
 
 .palette {
     display: flex;
-    height: 80px;
+    height: 120px;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -221,8 +221,10 @@ pre {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    overflow: hidden;
     color: transparent;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 600;
     font-family: 'Fira Code', monospace;
 }
@@ -233,10 +235,48 @@ pre {
     text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
-/* Swatch Selected State */
-.color-swatch {
-    position: relative;
+/* Swatch Interactive Menu Overlay */
+.swatch-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
 }
+.color-swatch:hover .swatch-overlay {
+    opacity: 1;
+    pointer-events: all;
+}
+.swatch-action {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+    width: 90%;
+    justify-content: center;
+}
+.swatch-action:hover {
+    background: white;
+    color: black;
+}
+
+/* Swatch Selected State */
 .color-swatch.selected {
     border: 3px solid white;
     transform: scale(0.95);

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Palette Generator & HEX/RGB Converter | Color Master</title>
-    <meta name="description" content="Free online color palette generator. Instantly generate beautiful color palettes and convert HEX, RGB, and HSL to Flutter, SwiftUI, Android XML, and CSS.">
-    <meta name="keywords" content="color palette generator, random color generator, hex color generator, color scheme generator, rgb to hex, flutter color converter">
+    <title>Color Palette Generator & HEX to RGB Converter | Free UI Colors</title>
+    <meta name="description" content="Generate beautiful color schemes, explore CSS gradients, and convert HEX to RGB codes instantly. The perfect color utility for web designers and front-end developers.">
+    <meta name="keywords" content="random color palette generator css, hex to rgb color converter online, ui color scheme generator online, gradient color code generator">
     <link rel="canonical" href="https://color-generator.corelumetech.in/">
 
     <!-- Open Graph / Facebook -->
@@ -56,7 +56,7 @@
     <div class="app-container">
         <!-- Main Color Display -->
         <div class="color-display" id="main-display">
-            <h1 id="display-hex">#6366F1</h1>
+            <h1 id="display-hex">Color Palette Generator & HEX to RGB Converter</h1>
             <p id="display-rgb">rgb(99, 102, 241)</p>
         </div>
 
@@ -197,17 +197,23 @@
 
                 <!-- Image Palette Extractor -->
                 <div class="card extractor-card">
-                    <h2>Image Palette Extractor</h2>
-                    <p class="selection-info">Upload an image to extract its dominant colors.</p>
+                    <h2>Image Color Extractor & Picker</h2>
+                    <p class="selection-info">Upload an image to extract its dominant colors, or <strong>click anywhere on the image</strong> to pick a specific pixel color!</p>
                     <input type="file" id="image-upload" accept="image/*" class="file-input" style="margin-bottom: 15px;">
                     
-                    <canvas id="image-canvas" style="display: none;"></canvas>
-                    <div class="image-preview-container">
-                        <img id="image-preview" />
-                        <span id="image-placeholder">No image selected</span>
+                    <div class="image-preview-container" id="image-preview-container" style="position: relative; overflow: hidden; border-radius: 8px; cursor: crosshair; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.2);">
+                        <canvas id="image-canvas" style="max-width: 100%; height: auto; display: block; border-radius: 8px;"></canvas>
+                        <!-- Loupe for color picking preview -->
+                        <div id="color-loupe" style="position: absolute; width: 60px; height: 60px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5); pointer-events: none; display: none; transform: translate(-50%, -50%); z-index: 10;"></div>
                     </div>
-
-                    <div class="palette" id="palette-extracted" style="margin-bottom: 0;">
+                    
+                    <h3 style="margin-top:20px; margin-bottom:10px; font-size: 1rem; color: #a5b4fc;">Dominant Colors</h3>
+                    <div class="palette" id="palette-extracted" style="margin-bottom: 20px;">
+                        <!-- Filled by JS -->
+                    </div>
+                    
+                    <h3 style="margin-bottom:10px; font-size: 1rem; color: #a5b4fc;">Picked Colors</h3>
+                    <div class="palette" id="palette-picked" style="margin-bottom: 0;">
                         <!-- Filled by JS -->
                     </div>
                 </div>
@@ -220,6 +226,17 @@
                 <p>Use our <strong>CSS Gradient Maker</strong> to create seamless transitions, or explore the <strong>Color Shades and Tints Generator</strong> to find the perfect hue. You can even upload a photo to our <strong>Image Color Extractor</strong> to pull a beautiful palette directly from an image!</p>
                 <p>Unlike standard tools, our generator includes a Universal Converter. Select multiple colors and instantly export them as CSS Variables, Flutter Color Arrays, SwiftUI formats, or Android XML, or download your entire palette as a PNG image.</p>
             </section>
+            <!-- Cross-Linking Footer -->
+            <div class="card cross-link-footer" style="text-align: center; margin-top: 40px; padding: 20px;">
+                <p style="margin: 0;"><strong>More Free Tools:</strong> 
+                    <a href="https://calculator.corelumetech.in/" style="color: #a5b4fc; text-decoration: none; margin: 0 10px; font-weight: 500;">Calculator</a> | 
+                    <a href="https://color-generator.corelumetech.in/" style="color: #a5b4fc; text-decoration: none; margin: 0 10px; font-weight: 500;">Color Generator</a> | 
+                    <a href="https://dev-tools.corelumetech.in/" style="color: #a5b4fc; text-decoration: none; margin: 0 10px; font-weight: 500;">Dev Tools</a> | 
+                    <a href="https://password-generator.corelumetech.in/" style="color: #a5b4fc; text-decoration: none; margin: 0 10px; font-weight: 500;">Password Generator</a> | 
+                    <a href="https://qr-generator.corelumetech.in/" style="color: #a5b4fc; text-decoration: none; margin: 0 10px; font-weight: 500;">QR Generator</a> | 
+                    <a href="https://text-tools.corelumetech.in/" style="color: #a5b4fc; text-decoration: none; margin: 0 10px; font-weight: 500;">Text Tools</a>
+                </p>
+            </div>
         </main>
     </div>
 

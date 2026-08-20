@@ -15,16 +15,9 @@
 }
 
 body {
-    background: linear-gradient(-45deg, #0f172a, #7e22ce, #0f172a, #0369a1);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
     color: #f8fafc;
     min-height: 100vh;
-}
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }
 
 .app-container {

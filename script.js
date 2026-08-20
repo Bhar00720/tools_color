@@ -487,12 +487,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateContrast();
 
-    // --- Image Palette Extractor ---
+    // --- Image Palette Extractor & Picker ---
     const imageUpload = document.getElementById('image-upload');
     const imageCanvas = document.getElementById('image-canvas');
-    const imagePreview = document.getElementById('image-preview');
-    const imagePlaceholder = document.getElementById('image-placeholder');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const colorLoupe = document.getElementById('color-loupe');
     const paletteExtracted = document.getElementById('palette-extracted');
+    const palettePicked = document.getElementById('palette-picked');
+    let pickerCtx = null;
 
     imageUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -502,10 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (event) => {
             const img = new Image();
             img.onload = () => {
-                imagePreview.src = event.target.result;
-                imagePreview.style.display = 'block';
-                imagePlaceholder.style.display = 'none';
-                
+                imagePreviewContainer.style.display = 'flex';
                 extractPaletteFromImage(img);
             };
             img.src = event.target.result;
@@ -514,29 +513,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function extractPaletteFromImage(img) {
-        const ctx = imageCanvas.getContext('2d');
-        const maxDim = 200;
+        pickerCtx = imageCanvas.getContext('2d');
+        const MAX_WIDTH = 800;
         let width = img.width;
         let height = img.height;
-        if(width > maxDim || height > maxDim) {
-            if(width > height) {
-                height = Math.round(height * maxDim / width);
-                width = maxDim;
-            } else {
-                width = Math.round(width * maxDim / height);
-                height = maxDim;
-            }
+        
+        if(width > MAX_WIDTH) {
+            height = Math.round(height * MAX_WIDTH / width);
+            width = MAX_WIDTH;
         }
+        
         imageCanvas.width = width;
         imageCanvas.height = height;
         // Fill white background for transparent images
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(img, 0, 0, width, height);
+        pickerCtx.fillStyle = '#FFFFFF';
+        pickerCtx.fillRect(0, 0, width, height);
+        pickerCtx.drawImage(img, 0, 0, width, height);
         
-        const imageData = ctx.getImageData(0, 0, width, height).data;
+        const imageData = pickerCtx.getImageData(0, 0, width, height).data;
         
-        // simple grid sampling
+        // simple grid sampling for dominant colors
         const colors = [];
         const step = Math.floor((imageData.length / 4) / 5);
         for(let i=0; i<5; i++) {
@@ -553,50 +549,102 @@ document.addEventListener('DOMContentLoaded', () => {
         paletteExtracted.innerHTML = '';
         colors.forEach(rgb => {
             const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-            const lum = (0.299*rgb.r + 0.587*rgb.g + 0.114*rgb.b)/255;
-            
-            const swatch = document.createElement('div');
-            swatch.className = 'color-swatch';
-            swatch.dataset.hex = hex;
-            if (selectedColors.includes(hex)) {
-                swatch.classList.add('selected');
-            }
-            
-            swatch.style.backgroundColor = hex;
-            swatch.style.color = lum > 0.5 ? '#000' : '#fff';
-            
-            swatch.innerHTML = `
-                <span class="swatch-text">${hex}</span>
-                <div class="swatch-overlay">
-                    <button class="swatch-action action-copy"><i class="fa-regular fa-copy"></i> Copy</button>
-                    <button class="swatch-action action-select"><i class="fa-solid fa-check"></i> Select</button>
-                    <button class="swatch-action action-main"><i class="fa-solid fa-star"></i> Main</button>
-                </div>
-            `;
-            
-            swatch.querySelector('.action-copy').addEventListener('click', (e) => {
-                e.stopPropagation();
-                navigator.clipboard.writeText(hex);
-                showToast('Copied: ' + hex);
-            });
-            
-            swatch.querySelector('.action-select').addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleSelection(hex);
-            });
-
-            swatch.querySelector('.action-main').addEventListener('click', (e) => {
-                e.stopPropagation();
-                const newRgb = hexToRgb(hex);
-                if(newRgb) {
-                    currentColor = newRgb;
-                    updateAll('manual');
-                }
-            });
-            
-            paletteExtracted.appendChild(swatch);
+            addSwatchToContainer(hex, paletteExtracted);
         });
+        
+        palettePicked.innerHTML = ''; // clear picked colors on new image
     }
+    
+    // Helper to add swatch
+    function addSwatchToContainer(hex, container) {
+        const lum = hexToRgb(hex) ? ((0.299*hexToRgb(hex).r + 0.587*hexToRgb(hex).g + 0.114*hexToRgb(hex).b)/255) : 1;
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.dataset.hex = hex;
+        if (selectedColors.includes(hex)) {
+            swatch.classList.add('selected');
+        }
+        
+        swatch.style.backgroundColor = hex;
+        swatch.style.color = lum > 0.5 ? '#000' : '#fff';
+        
+        swatch.innerHTML = `
+            <span class="swatch-text">${hex}</span>
+            <div class="swatch-overlay">
+                <button class="swatch-action action-copy"><i class="fa-regular fa-copy"></i> Copy</button>
+                <button class="swatch-action action-select"><i class="fa-solid fa-check"></i> Select</button>
+                <button class="swatch-action action-main"><i class="fa-solid fa-star"></i> Main</button>
+            </div>
+        `;
+        
+        swatch.querySelector('.action-copy').addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(hex);
+            showToast('Copied: ' + hex);
+        });
+        
+        swatch.querySelector('.action-select').addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSelection(hex);
+        });
+
+        swatch.querySelector('.action-main').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const newRgb = hexToRgb(hex);
+            if(newRgb) {
+                currentColor = newRgb;
+                updateAll('manual');
+            }
+        });
+        
+        container.appendChild(swatch);
+    }
+
+    // Color Loupe Interaction
+    imagePreviewContainer.addEventListener('mousemove', (e) => {
+        if (!pickerCtx) return;
+        const rect = imageCanvas.getBoundingClientRect();
+        
+        // Calculate coordinate relative to actual canvas resolution
+        const scaleX = imageCanvas.width / rect.width;
+        const scaleY = imageCanvas.height / rect.height;
+        
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        
+        if(x >= 0 && x < imageCanvas.width && y >= 0 && y < imageCanvas.height) {
+            const pixel = pickerCtx.getImageData(x, y, 1, 1).data;
+            const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
+            
+            colorLoupe.style.display = 'block';
+            colorLoupe.style.backgroundColor = hex;
+            // Move loupe slightly offset from cursor
+            colorLoupe.style.left = (e.clientX - rect.left) + 'px';
+            colorLoupe.style.top = (e.clientY - rect.top - 40) + 'px';
+        } else {
+            colorLoupe.style.display = 'none';
+        }
+    });
+
+    imagePreviewContainer.addEventListener('mouseleave', () => {
+        colorLoupe.style.display = 'none';
+    });
+
+    imagePreviewContainer.addEventListener('click', (e) => {
+        if (!pickerCtx) return;
+        const rect = imageCanvas.getBoundingClientRect();
+        const scaleX = imageCanvas.width / rect.width;
+        const scaleY = imageCanvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        
+        if(x >= 0 && x < imageCanvas.width && y >= 0 && y < imageCanvas.height) {
+            const pixel = pickerCtx.getImageData(x, y, 1, 1).data;
+            const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
+            addSwatchToContainer(hex, palettePicked);
+            showToast('Color Picked!');
+        }
+    });
 
     // --- Gradient Maker ---
     const gradColor1 = document.getElementById('grad-color1');

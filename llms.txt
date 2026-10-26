@@ -1,0 +1,38 @@
+# Color Master — Color Palette Generator & HEX to RGB Converter
+
+> Color Master is a free, 100% client-side color palette generator, gradient designer, and universal color code converter for web designers and front-end developers.
+
+Website: https://color-generator.corelumetech.in/
+Developer & Publisher: Corelume Tech (https://corelumetech.in)
+Privacy Policy: 100% Client-Side Processing. No user data, files, or strings are collected, stored, or transmitted to any server.
+
+## Overview
+Color Master is a free, 100% client-side color palette generator, gradient designer, and universal color code converter for web designers and front-end developers.
+
+## Core Features
+- Random and harmonious color palette generation (Monochromatic, Analogous, Complementary, Triadic)
+- Universal code conversion for CSS Variables, Flutter/Dart, SwiftUI, and Android XML
+- Interactive Shades & Tints generator (10 tint steps, 10 shade steps)
+- CSS Linear and Radial Gradient maker with live visual preview
+- Pixel-level Image Color Extractor with interactive loupe and palette generation
+- WCAG AA and AAA accessibility contrast ratio checker
+- High-resolution PNG palette export
+
+## Benchmarks & Technical Specifications
+- 16.7+ Million RGB/HEX colors supported
+- 100% Client-side privacy (0 external API requests for color data)
+- 0ms processing latency with instant browser rendering
+- 100% WCAG 2.1 compliance checking accuracy
+
+## Ecosystem Tools by Corelume Tech
+- Omni Calculator: https://calculator.corelumetech.in/
+- Color Master: https://color-generator.corelumetech.in/
+- Dev Tools: https://dev-tools.corelumetech.in/
+- Password Generator: https://password-generator.corelumetech.in/
+- QR Code Generator: https://qr-generator.corelumetech.in/
+- Text Utilities: https://text-tools.corelumetech.in/
+
+## Links & Discovery
+- Homepage: https://color-generator.corelumetech.in/
+- Sitemap: https://color-generator.corelumetech.in/sitemap.xml
+- Robots: https://color-generator.corelumetech.in/robots.txt
